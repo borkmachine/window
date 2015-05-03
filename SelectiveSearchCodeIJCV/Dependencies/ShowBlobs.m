@@ -27,6 +27,7 @@ for i=1:length(blobs)
     end
     if blobs{i}.size > minSize
         images{idx} = Blob2Image(blobs{i}, image);
+        %imwrite(images{idx}, ['blobs/blob_' num2str(idx) '.jpg']);
         if doNames
             iiNames{idx} = imNames{i};
         end

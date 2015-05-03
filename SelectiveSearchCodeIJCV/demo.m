@@ -54,7 +54,7 @@ minSize = k;
 sigma = 0.8;
 
 % As an example, use a single image
-images = {'000015.jpg'};
+images = {'corywindowfull.jpg'};
 im = imread(images{1});
 
 % Perform Selective Search
@@ -62,8 +62,25 @@ im = imread(images{1});
 boxes = BoxRemoveDuplicates(boxes);
 
 % Show boxes
-ShowRectsWithinImage(boxes, 5, 5, im);
+%ShowRectsWithinImage(boxes, 5, 5, im);
 
 % Show blobs which result from first similarity function
 hBlobs = RecreateBlobHierarchyIndIm(blobIndIm, blobBoxes, hierarchy{1});
-ShowBlobs(hBlobs, 5, 5, im);
+%ShowBlobs(hBlobs, 5, 5, im);
+
+%windBlobs = [7,10,12,18,19,20,32,45,59,62,63,70,83,96,134,163,164,182,186,187,191,194,195,205,207,209,221,227,248,250,262,269,270,278,282];
+%%
+im = imread(images{1});
+baseIm = rgb2gray(im2double(im));
+redOver = double(zeros(size(baseIm)));
+for i=1:length(windBlobs)%[1430,1431,1432]
+    g = windBlobs(i)
+    b = hBlobs{i};
+    %imshow( baseIm(b.rect(1):b.rect(3), b.rect(2):b.rect(4)).*double(b.mask));
+    masked = baseIm(b.rect(1):b.rect(3), b.rect(2):b.rect(4)).*-(1-double(b.mask));
+    redOver(b.rect(1):b.rect(3), b.rect(2):b.rect(4)) = redOver(b.rect(1):b.rect(3), b.rect(2):b.rect(4)) + 1.0/length(windBlobs) * (1-double(b.mask));
+    baseIm(b.rect(1):b.rect(3), b.rect(2):b.rect(4)) = baseIm(b.rect(1):b.rect(3), b.rect(2):b.rect(4)) - .5*masked;
+end
+im(redOver > prctile(redOver(:),60)) = 255;
+imshow(im)
+
