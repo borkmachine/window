@@ -5,11 +5,11 @@ function evaluate(img_dir, imgname, normal_dir)
     I = im2double(imread([img_dir imgname]));
     nmap = imread([normal_dir imgname(1:end-4) '_normalmap.png']);
     nmap = process_normap(nmap);
-    
+    nmap = zeros(size(nmap));
     
     [candidates_mcg, ~] = im2mcg(I,'fast');
     save('temp.mat', 'candidates_mcg');
-    load('temp.mat');
+    %load('temp.mat');
     
     valid_ids = [];
     % generate and filter bounding boxes
@@ -22,7 +22,7 @@ function evaluate(img_dir, imgname, normal_dir)
         cropped_normal = imcrop(nmap.*mask, b2);
         cropped_normal = cropped_normal(:,:,1);
         % filter the ceiling and floor
-        if sum(sum(or(cropped_normal > 0.9 , cropped_normal < -0.9))) > 0.1 * numel(cropped_normal)
+        if sum(sum(or(cropped_normal > 0.9 , cropped_normal < -0.9))) > 0.1 * sum(sum(mask))
             disp('filtered');
             continue
         end
@@ -33,10 +33,22 @@ function evaluate(img_dir, imgname, normal_dir)
     
     save('test.mat', 'valid_ids');
     
-    commandStr = 'python /Users/myName/pathToScript/sqr.py 2';
     
-    % run the CNN with python
+    %% 
+    setenv('CAFFE_ROOT', '/home/chiller/caffe');
+
+    setenv('CAFFE_DIST', '/home/chiller/caffe/distribute');
+    setenv('PATH', '/home/chiller/caffe/distribute/bin:/usr/local/cuda/bin:/opt/anaconda/bin:$PATH:/share/instsww/pkg/matlab-r2012b/bin');
+    setenv('LD_LIBRARY_PATH', '/home/chiller/caffe/distribute/lib:/usr/local/cuda/lib64:/opt/anaconda/lib');
+    setenv('PYTHONPATH', '/home/chiller/caffe/distribute/python');
+    
+    commandStr = '/usr/bin/python imnet.py';
     [status, commandOut] = system(commandStr);
+    if status == 1
+        disp('python failed');
+        return
+    end
+    
     
     load('outputVec.mat');
     

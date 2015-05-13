@@ -55,13 +55,16 @@ def main(inputs,imprefix,n=0):
 if __name__ == '__main__':
 	imprefix = "/home/chiller/cropped/crop_"
 	data = sio.loadmat('test.mat')
-	indicies = data['idx'][0]
+	if data['valid_ids'].shape[0] == 0:
+		res = []
+	else:
+		indicies = data['valid_ids'][0]
 
-	#print indicies
-	#print data.keys()
-	#processInput(34)
-	#n = int(sys.argv[1])
-	res = main(list(indicies), imprefix)
+		#print indicies
+		#print data.keys()
+		#processInput(34)
+		#n = int(sys.argv[1])
+		res = main(list(indicies), imprefix)
 	sio.savemat('outputVec.mat', {'idx':res})
 	print res
 	with open('outputTest.csv','wb') as f:
