@@ -43,16 +43,20 @@ function evaluate(img_dir, imgname, normal_dir)
         disp('python failed');
         return
     end
+    
     load('outputVec.mat');
 
-    % generate the mask based on the result passed from classifier
+    %% generate the mask based on the result passed from classifier
     result_mask = zeros(size(I,1), size(I,2));
     for id = idx
         mask = ismember(candidates_mcg.superpixels, candidates_mcg.labels{id});
         box = candidates_mcg.bboxes(id,:);
         b2 = [box(2) box(1) box(4)-box(2) box(3)-box(1)];
-        result_mask(box(1):box(3), box(2):box(4)) = result_mask(box(1):box(3), box(2):box(4)) + 1;
-    end
+        maskpct = sum(sum(mask))/((box(4)-box(2)+1)* (box(3)-box(1)+1));
+        result_mask(mask == 1) = result_mask(mask == 1) + (exp(2*maskpct)-1);
+    end    
+    
+    result_mask = result_mask - min(min(result_mask));
     result_mask = result_mask / max(max(result_mask));
     figure(2);
     imshow(result_mask);
