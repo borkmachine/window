@@ -51,10 +51,7 @@ function evaluate(img_dir, imgname, normal_dir)
         mask = ismember(candidates_mcg.superpixels, candidates_mcg.labels{id});
         box = candidates_mcg.bboxes(id,:);
         b2 = [box(2) box(1) box(4)-box(2) box(3)-box(1)];
-        % binary scheme
-        % result_mask = or(result_mask, mask);
-        % confidence encoded scheme
-        result_mask(box(2):box(4), box(1):box(3)) = result_mask(box(2):box(4), box(1):box(3)) + 1;
+        result_mask(box(1):box(3), box(2):box(4)) = result_mask(box(1):box(3), box(2):box(4)) + 1;
     end
     result_mask = result_mask / max(max(result_mask));
     figure(2);
