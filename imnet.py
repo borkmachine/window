@@ -28,7 +28,7 @@ net = caffe.Classifier(MODEL_FILE, PRETRAINED,
                        image_dims=(256, 256))
 
 # Random Forest classifier
-clf = joblib.load("/home/chiller/randForestCollectedPics.pkl")
+clf = joblib.load("/home/chiller/randForestCollectedPics2.pkl")
 
 
 def processInput(i,imprefix):
@@ -54,7 +54,7 @@ def main(inputs,imprefix,n=0):
 
 if __name__ == '__main__':
 	imprefix = "/home/chiller/cropped/crop_"
-	data = sio.loadmat('test.mat')
+	data = sio.loadmat('IDProps.mat')
 	if data['valid_ids'].shape[0] == 0:
 		res = []
 	else:

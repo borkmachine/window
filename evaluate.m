@@ -5,8 +5,10 @@ function evaluate(img_dir, imgname, normal_dir)
     I = im2double(imread([img_dir imgname]));
     nmap = imread([normal_dir imgname(1:end-4) '_normalmap.png']);
     nmap = process_normap(nmap);
-    nmap = zeros(size(nmap));
+    %nmap = zeros(size(nmap));
 
+    %I = imresize(I, .25);
+    %nmap = imresize(nmap, .25);
     [candidates_mcg, ~] = im2mcg(I,'fast');
     save('temp.mat', 'candidates_mcg');
     %load('temp.mat');
@@ -26,11 +28,13 @@ function evaluate(img_dir, imgname, normal_dir)
             disp('filtered');
             continue
         end
-
+        imwrite(imcrop(I.*mask, b2), ['/home/chiller/cropped/crop_' num2str(id) '.jpg']);
         valid_ids = [valid_ids, id];
-        I = insertObjectAnnotation(I, 'rectangle', b2, 'box');
+     
+        %I = insertObjectAnnotation(I, 'rectangle', b2, 'box');
     end
-    save('test.mat', 'valid_ids');
+    %%
+    save('IDProps.mat', 'valid_ids');
 
     setenv('CAFFE_ROOT', '/home/chiller/caffe');
     setenv('CAFFE_DIST', '/home/chiller/caffe/distribute');
@@ -39,13 +43,14 @@ function evaluate(img_dir, imgname, normal_dir)
     setenv('PYTHONPATH', '/home/chiller/caffe/distribute/python');
     commandStr = '/usr/bin/python imnet.py';
     [status, commandOut] = system(commandStr);
+    disp(commandOut)
     if status == 1
         disp('python failed');
         return
     end
-    
+    %%
     load('outputVec.mat');
-
+%load('temp.mat');
     %% generate the mask based on the result passed from classifier
     result_mask = zeros(size(I,1), size(I,2));
     for id = idx
@@ -53,11 +58,12 @@ function evaluate(img_dir, imgname, normal_dir)
         box = candidates_mcg.bboxes(id,:);
         b2 = [box(2) box(1) box(4)-box(2) box(3)-box(1)];
         maskpct = sum(sum(mask))/((box(4)-box(2)+1)* (box(3)-box(1)+1));
-        result_mask(mask == 1) = result_mask(mask == 1) + (exp(2*maskpct)-1);
+        result_mask(mask == 1) = result_mask(mask == 1) + 1;
     end    
     
     result_mask = result_mask - min(min(result_mask));
     result_mask = result_mask / max(max(result_mask));
     figure(2);
     imshow(result_mask);
+    imwrite(result_mask, ['result_' imgname]);
 end
