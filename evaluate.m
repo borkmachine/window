@@ -2,13 +2,15 @@
 function evaluate(img_dir, imgname, normal_dir)
     addpath('mcg/full');
     install
-    I = im2double(imread([img_dir imgname]));
+    I = im2single(imread([img_dir imgname]));
     nmap = imread([normal_dir imgname(1:end-4) '_normalmap.png']);
     nmap = process_normap(nmap);
     %nmap = zeros(size(nmap));
 
-    %I = imresize(I, .25);
-    %nmap = imresize(nmap, .25);
+    I = imresize(I, .25);
+    nmap = imresize(nmap, .25);
+    I(I > 1) = 1;
+    
     [candidates_mcg, ~] = im2mcg(I,'fast');
     save('temp.mat', 'candidates_mcg');
     %load('temp.mat');
