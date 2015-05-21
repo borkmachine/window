@@ -1,3 +1,9 @@
+% A simple script that goes through a directory of images and asks a user to draw a polygon on them using ROIPoly. 
+% Since pictures sometimes have multiple regions, hitting ‘a’ or ‘A’ will allow for another region to be drawn, 
+% this can be repeated as many times as needed. Hitting any other key after a region will go to the next image. 
+% Currently this also rotates the images by 90 degrees.
+
+
 files = dir('*.jpg');
 fileID = fopen('windows.txt', 'w');
 h=figure;
