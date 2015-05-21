@@ -1,3 +1,19 @@
+# This file runs a candidate image through the CNN, and then passes the feature vector from fc7 to a pre-trained random forest. 
+# Currently, this will create a matrix with [index, {0,1}] where 0 means not a window, 1 means window, according to the forest. 
+
+# Important things in this version:
+## imprefix: this is the name of the region proposal candidate images, such as “/home/chiller/cropped/crop_42.jpg” 
+### the current structure of the code assumes the file names with number.jpg but this can easily be changed. 
+
+## data is where the matrix of ID’s in variable “valid_ids” is stored, this is a list of valid indices
+### (as determined by the normal map filtering or other processing) that we wish to classify. 
+
+## clf is the classifier, and is loaded from the specificed path/pkl file. I don’t think this has to be a random forest, but that is what we used. 
+
+## As written, this program will create n copies of itself where n is the number of processor threads available.
+### On Quebec, this is 32. The only reason that we are running caffe in CPU mode is that GPU mode wasn’t working 
+### right off the bat and we didn’t want to spend time fixing it. Running this on the GPU should make it much much faster. 
+
 import numpy as np
 
 from joblib import Parallel, delayed
