@@ -1,0 +1,16 @@
+We use the LIBLINEAR software package to perform linear classification.
+
+A complete reference can be found here:
+http://www.csie.ntu.edu.tw/~cjlin/liblinear/
+
+Notes:
+-LIBLINEAR needs to be compiled before use.
+-The compiled 'train' and 'predict' functions need to be included in your
+   MATLAB path if they are not in your current working directory.
+     -On the HOME tab, in the ENVIRONMENT section, click SET PATH.
+     -Add the directory in which LIBLINEAR is installed.
+-LIBLINEAR can take a variety of parameters as a string, to see a full
+ list, you can either:
+    -Type 'train' or 'predict' in the MATLAB interpreter
+    -Consult the LIBLINEAR README in the matlab/ folder
+
