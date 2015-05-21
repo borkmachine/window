@@ -1,3 +1,6 @@
+#This scripts reads from data.mat, one variable contains the features, another contains labels. 
+#Currently this uses a RandomForestClassifier, but this could be changed to whatever you want. 
+
 import sklearn
 import scipy.io as sio
 import numpy as np
